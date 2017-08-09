@@ -16,7 +16,7 @@ public class Ingredient extends RealmObject implements Parcelable {
 
     @SerializedName("quantity")
     @Expose
-    private int quantity;
+    private double quantity;
 
     @SerializedName("measure")
     @Expose
@@ -29,11 +29,11 @@ public class Ingredient extends RealmObject implements Parcelable {
     public Ingredient() {
     }
 
-    public int getQuantity() {
+    public double getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(double quantity) {
         this.quantity = quantity;
     }
 
@@ -54,7 +54,7 @@ public class Ingredient extends RealmObject implements Parcelable {
     }
 
     protected Ingredient(Parcel in) {
-        quantity = in.readInt();
+        quantity = in.readDouble();
         measure = in.readString();
         ingredient = in.readString();
     }
@@ -78,7 +78,7 @@ public class Ingredient extends RealmObject implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(quantity);
+        dest.writeDouble(quantity);
         dest.writeString(measure);
         dest.writeString(ingredient);
     }

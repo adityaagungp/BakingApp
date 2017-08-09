@@ -10,9 +10,7 @@ import java.util.List;
 
 public interface RecipesView {
 
-    void onBeforeGetRecipes();
-
-    void onLoadingRecipes();
-
     void onShowRecipes(List<Recipe> recipes);
+
+    void onErrorLoadingRecipes(String message);
 }

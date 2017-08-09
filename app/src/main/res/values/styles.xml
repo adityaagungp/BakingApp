@@ -6,6 +6,17 @@
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
+        <item name="colorButtonNormal">@color/accent</item>
+    </style>
+
+    <style name="ButtonTheme">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:minWidth">128dp</item>
+        <item name="android:paddingRight">8dp</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/icons</item>
     </style>
 
     <style name="BodyText">

@@ -8,13 +8,7 @@
     android:padding="@dimen/margin_small">
 
     <TextView
-        android:id="@+id/ingredientName"
+        android:id="@+id/ingredientDetail"
         tools:text="@string/app_name"
         style="@style/ContentText"/>
-
-    <TextView
-        android:id="@+id/ingredientAmount"
-        android:layout_marginTop="@dimen/margin_tiny"
-        tools:text="@string/app_name"
-        style="@style/CaptionText"/>
 </LinearLayout>

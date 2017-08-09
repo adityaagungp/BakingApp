@@ -6,8 +6,10 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -28,11 +30,19 @@ public class Recipe extends RealmObject implements Parcelable {
 
     @SerializedName("ingredients")
     @Expose
-    private List<Ingredient> ingredients;
+    private RealmList<Ingredient> ingredients;
 
     @SerializedName("steps")
     @Expose
-    private List<Step> steps;
+    private RealmList<Step> steps;
+
+    @SerializedName("servings")
+    @Expose
+    private int servings;
+
+    @SerializedName("image")
+    @Expose
+    private String image;
 
     public Recipe() {
     }
@@ -58,7 +68,7 @@ public class Recipe extends RealmObject implements Parcelable {
     }
 
     public void setIngredients(List<Ingredient> ingredients) {
-        this.ingredients = ingredients;
+        this.ingredients = (RealmList<Ingredient>) ingredients;
     }
 
     public List<Step> getSteps() {
@@ -66,14 +76,36 @@ public class Recipe extends RealmObject implements Parcelable {
     }
 
     public void setSteps(List<Step> steps) {
-        this.steps = steps;
+        this.steps = (RealmList<Step>) steps;
+    }
+
+    public int getServings() {
+        return servings;
+    }
+
+    public void setServings(int servings) {
+        this.servings = servings;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     protected Recipe(Parcel in) {
         id = in.readLong();
         name = in.readString();
-        ingredients = in.createTypedArrayList(Ingredient.CREATOR);
-        steps = in.createTypedArrayList(Step.CREATOR);
+        ArrayList<Ingredient> ingredients = in.createTypedArrayList(Ingredient.CREATOR);
+        this.ingredients = new RealmList<>();
+        this.ingredients.addAll(ingredients);
+        ArrayList<Step> steps = in.createTypedArrayList(Step.CREATOR);
+        this.steps = new RealmList<>();
+        this.steps.addAll(steps);
+        servings = in.readInt();
+        image = in.readString();
     }
 
     public static final Creator<Recipe> CREATOR = new Creator<Recipe>() {
@@ -99,5 +131,7 @@ public class Recipe extends RealmObject implements Parcelable {
         dest.writeString(name);
         dest.writeTypedList(ingredients);
         dest.writeTypedList(steps);
+        dest.writeInt(servings);
+        dest.writeString(image);
     }
 }

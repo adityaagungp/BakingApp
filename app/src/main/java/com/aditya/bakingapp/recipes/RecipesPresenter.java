@@ -12,5 +12,9 @@ public interface RecipesPresenter {
 
     void loadRecipes();
 
-    void presentRecipes(List<Recipe> recipes);
+    void failLoadingRecipes(String message);
+
+    List<Recipe> getRecipes();
+
+    void setRecipes(List<Recipe> recipes);
 }
