@@ -1,4 +1,4 @@
-package com.aditya.bakingapp.recipes;
+package com.aditya.bakingapp.home;
 
 import android.os.Parcelable;
 import android.support.design.widget.Snackbar;
@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -24,13 +23,13 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements RecipesView, ItemClickListener{
+public class MainActivity extends AppCompatActivity implements HomeView, ItemClickListener{
 
     @BindView(R.id.progressBar) ProgressBar progressBar;
     @BindView(R.id.emptyText) TextView emptyText;
     @BindView(R.id.list) RecyclerView list;
 
-    private RecipesPresenter mPresenter;
+    private HomePresenter mPresenter;
     private RecipeAdapter mAdapter;
     private int mNumberColumn;
 
@@ -39,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements RecipesView, Item
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        mPresenter = new RecipesPresenterImpl(this);
+        mPresenter = new HomePresenterImpl(this);
         mAdapter = new RecipeAdapter(this, this);
         mAdapter.setRecipes(mPresenter.getRecipes());
 

@@ -1,6 +1,4 @@
-package com.aditya.bakingapp.recipes;
-
-import android.util.Log;
+package com.aditya.bakingapp.home;
 
 import com.aditya.bakingapp.object.Recipe;
 
@@ -11,16 +9,16 @@ import java.util.List;
  * Created by ASUS A456U on 07/08/2017.
  */
 
-public class RecipesPresenterImpl implements RecipesPresenter {
+public class HomePresenterImpl implements HomePresenter {
 
     private List<Recipe> mRecipes;
-    private RecipesView mView;
-    private RecipesInteractor mInteractor;
+    private HomeView mView;
+    private HomeInteractor mInteractor;
 
-    public RecipesPresenterImpl(RecipesView view){
+    public HomePresenterImpl(HomeView view){
         mView = view;
         mRecipes = new ArrayList<>();
-        mInteractor = new RecipesInteractorImpl(this);
+        mInteractor = new HomeInteractorImpl(this);
     }
 
     @Override

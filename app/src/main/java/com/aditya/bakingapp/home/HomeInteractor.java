@@ -1,10 +1,10 @@
-package com.aditya.bakingapp.recipes;
+package com.aditya.bakingapp.home;
 
 /**
  * Created by ASUS A456U on 08/08/2017.
  */
 
-public interface RecipesInteractor {
+public interface HomeInteractor {
 
     void loadRecipes();
 }

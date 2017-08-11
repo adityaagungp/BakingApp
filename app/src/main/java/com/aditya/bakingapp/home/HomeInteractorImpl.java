@@ -1,6 +1,4 @@
-package com.aditya.bakingapp.recipes;
-
-import android.util.Log;
+package com.aditya.bakingapp.home;
 
 import com.aditya.bakingapp.api.APIRequest;
 import com.aditya.bakingapp.object.Recipe;
@@ -16,11 +14,11 @@ import retrofit2.Response;
  * Created by ASUS A456U on 08/08/2017.
  */
 
-public class RecipesInteractorImpl implements RecipesInteractor, Callback<List<Recipe>> {
+public class HomeInteractorImpl implements HomeInteractor, Callback<List<Recipe>> {
 
-    private RecipesPresenter mPresenter;
+    private HomePresenter mPresenter;
 
-    public RecipesInteractorImpl(RecipesPresenter presenter){
+    public HomeInteractorImpl(HomePresenter presenter){
         mPresenter = presenter;
     }
 
