@@ -17,4 +17,6 @@ public interface HomePresenter {
     List<Recipe> getRecipes();
 
     void setRecipes(List<Recipe> recipes);
+
+    Recipe getRecipeAt(int index);
 }

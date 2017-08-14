@@ -1,9 +1,10 @@
 package com.aditya.bakingapp.home;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import com.aditya.bakingapp.R;
 import com.aditya.bakingapp.adapter.RecipeAdapter;
 import com.aditya.bakingapp.object.Recipe;
+import com.aditya.bakingapp.recipe.RecipeActivity;
 import com.aditya.bakingapp.util.Constants;
 import com.aditya.bakingapp.util.NetworkUtils;
 import com.aditya.bakingapp.view.ItemClickListener;
@@ -23,11 +25,14 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements HomeView, ItemClickListener{
+public class MainActivity extends AppCompatActivity implements HomeView, ItemClickListener {
 
-    @BindView(R.id.progressBar) ProgressBar progressBar;
-    @BindView(R.id.emptyText) TextView emptyText;
-    @BindView(R.id.list) RecyclerView list;
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
+    @BindView(R.id.emptyText)
+    TextView emptyText;
+    @BindView(R.id.list)
+    RecyclerView list;
 
     private HomePresenter mPresenter;
     private RecipeAdapter mAdapter;
@@ -42,12 +47,14 @@ public class MainActivity extends AppCompatActivity implements HomeView, ItemCli
         mAdapter = new RecipeAdapter(this, this);
         mAdapter.setRecipes(mPresenter.getRecipes());
 
-        if (savedInstanceState !=null && savedInstanceState.containsKey(Constants.Param.RECIPES)){
+        if (savedInstanceState != null && savedInstanceState.containsKey(Constants.Param.RECIPES)) {
             ArrayList<Recipe> recipes = savedInstanceState.getParcelableArrayList(Constants.Param.RECIPES);
             mPresenter.setRecipes(recipes);
         }
 
-        fetchRecipes();
+        if (mPresenter.getRecipes() == null || mPresenter.getRecipes().isEmpty()) {
+            fetchRecipes();
+        }
 
         //TODO: Modify number of columns for specific width screen
         mNumberColumn = 1;
@@ -57,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements HomeView, ItemCli
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState){
+    public void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList(Constants.Param.RECIPES, (ArrayList<? extends Parcelable>) mPresenter.getRecipes());
         super.onSaveInstanceState(outState);
     }
@@ -84,11 +91,14 @@ public class MainActivity extends AppCompatActivity implements HomeView, ItemCli
 
     @Override
     public void onItemClick(int index) {
-
+        Recipe recipe = mPresenter.getRecipeAt(index);
+        if (recipe != null) {
+            toRecipeDetail(recipe);
+        }
     }
 
-    private void fetchRecipes(){
-        if (NetworkUtils.isOnline(this)){
+    private void fetchRecipes() {
+        if (NetworkUtils.isOnline(this)) {
             onBeforeGetRecipes();
             mPresenter.loadRecipes();
         } else {
@@ -96,13 +106,19 @@ public class MainActivity extends AppCompatActivity implements HomeView, ItemCli
         }
     }
 
-    private void showRecipes(List<Recipe> recipes){
-        if (recipes == null || recipes.isEmpty()){
+    private void showRecipes(List<Recipe> recipes) {
+        if (recipes == null || recipes.isEmpty()) {
             emptyText.setVisibility(View.VISIBLE);
             list.setVisibility(View.INVISIBLE);
         } else {
             emptyText.setVisibility(View.INVISIBLE);
             list.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void toRecipeDetail(Recipe recipe) {
+        Intent intent = new Intent(this, RecipeActivity.class);
+        intent.putExtra(Constants.Param.RECIPE, recipe);
+        startActivity(intent);
     }
 }

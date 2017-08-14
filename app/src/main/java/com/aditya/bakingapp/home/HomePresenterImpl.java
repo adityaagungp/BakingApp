@@ -41,4 +41,13 @@ public class HomePresenterImpl implements HomePresenter {
         mRecipes = recipes;
         mView.onShowRecipes(mRecipes);
     }
+
+    @Override
+    public Recipe getRecipeAt(int index) {
+        try {
+            return mRecipes.get(index);
+        } catch (IndexOutOfBoundsException e){
+            return null;
+        }
+    }
 }

@@ -7,6 +7,8 @@ package com.aditya.bakingapp.util;
 public class Constants {
 
     public static final class Param {
+        public static final String RECIPE = "recipe";
         public static final String RECIPES = "recipes";
+        public static final String TWO_PANE = "twoPane";
     }
 }
