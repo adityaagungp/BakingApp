@@ -1,11 +1,12 @@
 package com.aditya.bakingapp.recipe;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
@@ -18,12 +19,15 @@ import butterknife.ButterKnife;
 
 public class RecipeActivity extends AppCompatActivity {
 
-    @BindView(R.id.masterContent) FrameLayout masterContent;
-    @Nullable @BindView(R.id.childContent) FrameLayout childContent;
+    @BindView(R.id.masterContent)
+    FrameLayout masterContent;
+    @Nullable
+    @BindView(R.id.childContent)
+    FrameLayout childContent;
 
     private FragmentManager mFragmentManager;
-    private Recipe mRecipe;
     private boolean mTwoPane;
+    private Recipe mRecipe;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,24 +37,33 @@ public class RecipeActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         mFragmentManager = getSupportFragmentManager();
+        mTwoPane = (childContent != null);
         Intent intent = getIntent();
-        if (intent.hasExtra(Constants.Param.RECIPE)){
+        if (intent.hasExtra(Constants.Param.RECIPE)) {
             mRecipe = intent.getParcelableExtra(Constants.Param.RECIPE);
             getSupportActionBar().setTitle(mRecipe.getName());
-        }
-
-        mTwoPane = (childContent != null);
-        if (mRecipe != null){
-            initRecipeDetailFragment();
-        }
-        if (mTwoPane){
-            initIngredientsFragment();
+            if (mRecipe != null) {
+                initRecipeDetailFragment();
+                if (mTwoPane) initIngredientsFragment();
+            }
         }
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        if (item.getItemId() == android.R.id.home){
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable(Constants.Param.RECIPE, mRecipe);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle inState) {
+        super.onRestoreInstanceState(inState);
+        mRecipe = inState.getParcelable(Constants.Param.RECIPE);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
             onBackPressed();
             return true;
         }
@@ -58,11 +71,11 @@ public class RecipeActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed(){
-        if (mTwoPane){
+    public void onBackPressed() {
+        if (mTwoPane) {
             super.onBackPressed();
         } else {
-            if (mFragmentManager.getBackStackEntryCount() > 0){
+            if (mFragmentManager.getBackStackEntryCount() > 0) {
                 mFragmentManager.popBackStack();
             } else {
                 super.onBackPressed();
@@ -70,24 +83,31 @@ public class RecipeActivity extends AppCompatActivity {
         }
     }
 
-    public Recipe getRecipe(){
+    public Recipe getRecipe() {
         return mRecipe;
     }
 
-    private void initRecipeDetailFragment(){
+    public void showChildFragment(Fragment fragment) {
+        FragmentTransaction transaction = mFragmentManager.beginTransaction();
+        transaction.replace(R.id.childContent, fragment);
+        transaction.commit();
+    }
+
+    private void initRecipeDetailFragment() {
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
         RecipeDetailFragment fragment = new RecipeDetailFragment();
         Bundle bundle = new Bundle();
         bundle.putBoolean(Constants.Param.TWO_PANE, mTwoPane);
         fragment.setArguments(bundle);
-        transaction.replace(R.id.masterContent, fragment);
+        transaction.add(R.id.masterContent, fragment, "Recipe Detail");
         transaction.commit();
     }
 
-    private void initIngredientsFragment(){
-        FragmentTransaction transaction = mFragmentManager.beginTransaction();
+    private void initIngredientsFragment() {
         IngredientsFragment fragment = new IngredientsFragment();
-        transaction.replace(R.id.childContent, fragment);
-        transaction.commit();
+        Bundle data = new Bundle();
+        data.putBoolean(Constants.Param.TWO_PANE, mTwoPane);
+        fragment.setArguments(data);
+        showChildFragment(fragment);
     }
 }

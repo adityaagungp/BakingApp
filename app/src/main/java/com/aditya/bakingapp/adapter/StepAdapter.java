@@ -95,6 +95,7 @@ public class StepAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         StepViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(this);
         }
 
         void bind(Step step){

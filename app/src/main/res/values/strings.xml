@@ -3,6 +3,7 @@
     <string name="empty_ingredient">Sorry, there are no ingredient to display</string>
     <string name="empty_recipe">Sorry, there are no recipe to display</string>
     <string name="empty_step">Sorry, there are no recipe step to display</string>
+    <string name="ingredients_of">Ingredients of</string>
     <string name="no_internet">Sorry, there is no internet connection</string>
     <string name="of">of</string>
     <string name="see_ingredients">See Ingredients</string>
@@ -11,4 +12,5 @@
         <item quantity="one">Served for %d person.</item>
         <item quantity="other">Served for %d people.</item>
     </plurals>
+    <string name="tablet_view">false</string>
 </resources>

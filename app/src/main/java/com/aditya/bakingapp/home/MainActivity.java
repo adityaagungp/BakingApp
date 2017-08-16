@@ -1,6 +1,7 @@
 package com.aditya.bakingapp.home;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.design.widget.Snackbar;
@@ -51,13 +52,14 @@ public class MainActivity extends AppCompatActivity implements HomeView, ItemCli
             ArrayList<Recipe> recipes = savedInstanceState.getParcelableArrayList(Constants.Param.RECIPES);
             mPresenter.setRecipes(recipes);
         }
-
         if (mPresenter.getRecipes() == null || mPresenter.getRecipes().isEmpty()) {
             fetchRecipes();
         }
 
-        //TODO: Modify number of columns for specific width screen
-        mNumberColumn = 1;
+        mNumberColumn = list.getTag().equals("true") ? 2 : 1;
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            mNumberColumn += 1;
+        }
         GridLayoutManager layoutManager = new GridLayoutManager(this, mNumberColumn);
         list.setLayoutManager(layoutManager);
         list.setAdapter(mAdapter);

@@ -9,6 +9,7 @@
     android:paddingEnd="@dimen/margin_small"
     android:paddingTop="@dimen/margin_medium"
     android:paddingBottom="@dimen/margin_medium"
+    android:layout_margin="@dimen/margin_small"
     android:gravity="center_horizontal"
     android:background="@drawable/bg_step"
     tools:text="@string/app_name"
