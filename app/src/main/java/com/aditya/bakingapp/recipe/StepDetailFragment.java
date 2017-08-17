@@ -33,7 +33,6 @@ import com.google.android.exoplayer2.trackselection.AdaptiveVideoTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DataSource;
@@ -48,7 +47,7 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class StepDetailFragment extends Fragment implements ExoPlayer.EventListener{
+public class StepDetailFragment extends Fragment implements ExoPlayer.EventListener {
 
     @BindView(R.id.playerView)
     SimpleExoPlayerView playerView;
@@ -62,6 +61,9 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     private Step mStep;
     private boolean mTwoPane;
     private SimpleExoPlayer mExoPlayer;
+    private DataSource.Factory mDataSourceFactory;
+    private DefaultTrackSelector mTrackSelector;
+    private BandwidthMeter mBandwidthMeter;
     private MediaSessionCompat mMediaSession;
     private PlaybackStateCompat.Builder mStateBuilder;
 
@@ -75,6 +77,8 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         ButterKnife.bind(this, view);
         Bundle data = getArguments();
         mTwoPane = false;
+
+
         if (data.containsKey(Constants.Param.STEP)) {
             mStep = data.getParcelable(Constants.Param.STEP);
             if (data.containsKey(Constants.Param.TWO_PANE)) {
@@ -117,6 +121,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         } else {
             playerView.setVisibility(View.VISIBLE);
             setupPlayerView();
+            initMediaSession();
         }
         if (mStep.getThumbnailURL() == null || mStep.getThumbnailURL().length() == 0) {
             imageView.setVisibility(View.GONE);
@@ -130,30 +135,29 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
 
     private void setupPlayerView() {
         playerView.setDefaultArtwork(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
-        initMediaSession();
-        BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+        mBandwidthMeter = new DefaultBandwidthMeter();
+        mDataSourceFactory = new DefaultDataSourceFactory(getContext(), Util.getUserAgent(getContext(), "BakingApp"),
+                (TransferListener<? super DataSource>) mBandwidthMeter);
         LoadControl loadControl = new DefaultLoadControl();
-        TrackSelection.Factory videoTrackSelection = new AdaptiveVideoTrackSelection.Factory(bandwidthMeter);
-        TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelection);
-        mExoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector, loadControl);
-
-        DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(getContext(), Util.getUserAgent(getContext(), "BakingApp"), (TransferListener<? super DataSource>) bandwidthMeter);
-        DefaultExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
+        TrackSelection.Factory videoTrackSelection = new AdaptiveVideoTrackSelection.Factory(mBandwidthMeter);
+        mTrackSelector = new DefaultTrackSelector(videoTrackSelection);
+        mExoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), mTrackSelector, loadControl);
         playerView.setPlayer(mExoPlayer);
-        mExoPlayer.addListener(this);
-        MediaSource mediaSource = new ExtractorMediaSource(Uri.parse(mStep.getVideoURL()), dataSourceFactory,
+        DefaultExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
+        MediaSource mediaSource = new ExtractorMediaSource(Uri.parse(mStep.getVideoURL()), mDataSourceFactory,
                 extractorsFactory, null, null);
+        mExoPlayer.addListener(this);
         mExoPlayer.prepare(mediaSource);
         mExoPlayer.setPlayWhenReady(true);
     }
 
     private void initMediaSession() {
+        mStateBuilder = new PlaybackStateCompat.Builder().setActions(PlaybackStateCompat.ACTION_PLAY |
+                PlaybackStateCompat.ACTION_PAUSE | PlaybackStateCompat.ACTION_PLAY_PAUSE);
         mMediaSession = new MediaSessionCompat(getContext(), "Step");
         mMediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
                 MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
         mMediaSession.setMediaButtonReceiver(null);
-        mStateBuilder = new PlaybackStateCompat.Builder().setActions(PlaybackStateCompat.ACTION_PLAY |
-                PlaybackStateCompat.ACTION_PAUSE | PlaybackStateCompat.ACTION_PLAY_PAUSE);
         mMediaSession.setPlaybackState(mStateBuilder.build());
         mMediaSession.setCallback(new MySessionCallback());
         mMediaSession.setActive(true);
@@ -187,12 +191,14 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-        if (playbackState == ExoPlayer.STATE_READY && playWhenReady){
-            mStateBuilder.setState(PlaybackStateCompat.STATE_PLAYING, mExoPlayer.getCurrentPosition(), 1f);
-        } else if (playbackState == ExoPlayer.STATE_READY){
-            mStateBuilder.setState(PlaybackStateCompat.STATE_PAUSED, mExoPlayer.getCurrentPosition(), 1f);
+        if (mStateBuilder != null && mExoPlayer != null && mMediaSession != null){
+            if (playbackState == ExoPlayer.STATE_READY && playWhenReady){
+                mStateBuilder.setState(PlaybackStateCompat.STATE_PLAYING, mExoPlayer.getCurrentPosition(), 1f);
+            } else if (playbackState == ExoPlayer.STATE_READY){
+                mStateBuilder.setState(PlaybackStateCompat.STATE_PAUSED, mExoPlayer.getCurrentPosition(), 1f);
+            }
+            mMediaSession.setPlaybackState(mStateBuilder.build());
         }
-        mMediaSession.setPlaybackState(mStateBuilder.build());
     }
 
     @Override

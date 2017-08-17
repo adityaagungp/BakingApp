@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.aditya.bakingapp.R;
 import com.aditya.bakingapp.object.Ingredient;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -22,7 +23,7 @@ import butterknife.ButterKnife;
 public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.IngredientViewHolder> {
 
     private Context context;
-    private List<Ingredient> ingredients;
+    private List<Ingredient> ingredients = new ArrayList<>();
 
     public IngredientAdapter(Context context){
         this.context = context;

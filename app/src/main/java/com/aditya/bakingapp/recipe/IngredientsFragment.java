@@ -56,7 +56,6 @@ public class IngredientsFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         list.setLayoutManager(layoutManager);
         mAdapter = new IngredientAdapter(getContext());
-        mAdapter.setIngredients(ingredients);
         list.setAdapter(mAdapter);
         DividerItemDecoration divider = new DividerItemDecoration(list.getContext(), layoutManager.getOrientation());
         list.addItemDecoration(divider);
@@ -91,7 +90,9 @@ public class IngredientsFragment extends Fragment {
         if (inState != null) {
             ArrayList<Ingredient> savedIngredients = inState.getParcelableArrayList(Constants.Param.INGREDIENTS);
             ingredients = new ArrayList<>();
-            ingredients.addAll(savedIngredients);
+            if (savedIngredients != null){
+                ingredients.addAll(savedIngredients);
+            }
             mRecipeName = inState.getString(Constants.Param.RECIPE_NAME);
             mTwoPane = inState.getBoolean(Constants.Param.TWO_PANE);
         }
@@ -108,6 +109,7 @@ public class IngredientsFragment extends Fragment {
             list.setVisibility(View.GONE);
             emptyText.setVisibility(View.VISIBLE);
         } else {
+            mAdapter.setIngredients(ingredients);
             list.setVisibility(View.VISIBLE);
             emptyText.setVisibility(View.GONE);
         }

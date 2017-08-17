@@ -42,7 +42,10 @@ public class RecipeActivity extends AppCompatActivity {
         if (intent.hasExtra(Constants.Param.RECIPE)) {
             mRecipe = intent.getParcelableExtra(Constants.Param.RECIPE);
             getSupportActionBar().setTitle(mRecipe.getName());
-            if (mRecipe != null) {
+        }
+
+        if (savedInstanceState == null){
+            if (mRecipe != null){
                 initRecipeDetailFragment();
                 if (mTwoPane) initIngredientsFragment();
             }
@@ -99,7 +102,7 @@ public class RecipeActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putBoolean(Constants.Param.TWO_PANE, mTwoPane);
         fragment.setArguments(bundle);
-        transaction.add(R.id.masterContent, fragment, "Recipe Detail");
+        transaction.replace(R.id.masterContent, fragment);
         transaction.commit();
     }
 
