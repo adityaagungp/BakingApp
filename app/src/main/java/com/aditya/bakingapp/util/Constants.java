@@ -6,7 +6,10 @@ package com.aditya.bakingapp.util;
 
 public class Constants {
 
+    public static final String PREFERENCES = "BakingAppPref";
+
     public static final class Param {
+        public static final String RECIPE_ID = "activeRecipeId";
         public static final String INGREDIENTS = "ingredients";
         public static final String RECIPE = "recipe";
         public static final String RECIPES = "recipes";

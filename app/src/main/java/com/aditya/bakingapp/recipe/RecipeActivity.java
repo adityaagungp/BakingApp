@@ -16,6 +16,7 @@ import com.aditya.bakingapp.util.Constants;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
 
 public class RecipeActivity extends AppCompatActivity {
 
@@ -42,6 +43,10 @@ public class RecipeActivity extends AppCompatActivity {
         if (intent.hasExtra(Constants.Param.RECIPE)) {
             mRecipe = intent.getParcelableExtra(Constants.Param.RECIPE);
             getSupportActionBar().setTitle(mRecipe.getName());
+        } else if (intent.hasExtra(Constants.Param.RECIPE_ID)){
+            long id = intent.getLongExtra(Constants.Param.RECIPE_ID, -1);
+            Realm realm = Realm.getDefaultInstance();
+            mRecipe = realm.where(Recipe.class).equalTo("id", id).findFirst();
         }
 
         if (savedInstanceState == null){

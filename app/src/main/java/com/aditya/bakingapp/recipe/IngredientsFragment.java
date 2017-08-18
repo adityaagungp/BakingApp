@@ -101,9 +101,7 @@ public class IngredientsFragment extends Fragment {
 
     public void showIngredients(List<Ingredient> ingredients) {
         if (!mTwoPane) {
-            StringBuilder builder = new StringBuilder();
-            builder.append(getString(R.string.ingredients_of)).append(' ').append(mRecipeName);
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(new String(builder));
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(String.format(getString(R.string.ingredients_of), mRecipeName));
         }
         if (ingredients == null || ingredients.isEmpty()) {
             list.setVisibility(View.GONE);

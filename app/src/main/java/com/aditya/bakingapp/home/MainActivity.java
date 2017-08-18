@@ -19,6 +19,7 @@ import com.aditya.bakingapp.recipe.RecipeActivity;
 import com.aditya.bakingapp.util.Constants;
 import com.aditya.bakingapp.util.NetworkUtils;
 import com.aditya.bakingapp.view.ItemClickListener;
+import com.aditya.bakingapp.widget.RecipeUpdateService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,13 +89,15 @@ public class MainActivity extends AppCompatActivity implements HomeView, ItemCli
     public void onErrorLoadingRecipes(String message) {
         progressBar.setVisibility(View.INVISIBLE);
         showRecipes(mPresenter.getRecipes());
-        Snackbar.make(getWindow().getDecorView().getRootView(), message, Snackbar.LENGTH_LONG);
+        Snackbar.make(getWindow().getDecorView().getRootView(), message, Snackbar.LENGTH_LONG).show();
     }
 
     @Override
     public void onItemClick(int index) {
         Recipe recipe = mPresenter.getRecipeAt(index);
         if (recipe != null) {
+            mPresenter.setActiveRecipeId(this, recipe.getId());
+            RecipeUpdateService.startActionUpdate(this);
             toRecipeDetail(recipe);
         }
     }

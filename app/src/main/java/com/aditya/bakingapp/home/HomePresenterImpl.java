@@ -1,6 +1,10 @@
 package com.aditya.bakingapp.home;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import com.aditya.bakingapp.object.Recipe;
+import com.aditya.bakingapp.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,5 +53,13 @@ public class HomePresenterImpl implements HomePresenter {
         } catch (IndexOutOfBoundsException e){
             return null;
         }
+    }
+
+    @Override
+    public void setActiveRecipeId(Context context, long id) {
+        SharedPreferences preferences = context.getApplicationContext().getSharedPreferences(Constants.PREFERENCES, 0);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putLong(Constants.Param.RECIPE_ID, id);
+        editor.apply();
     }
 }

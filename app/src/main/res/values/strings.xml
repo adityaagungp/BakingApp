@@ -3,7 +3,9 @@
 	<string name="empty_ingredient">Sorry, there are no ingredient to display</string>
 	<string name="empty_recipe">Sorry, there are no recipe to display</string>
 	<string name="empty_step">Sorry, there are no recipe step to display</string>
-	<string name="ingredients_of">Ingredients of</string>
+	<string name="goto_app">Go to BakingApp</string>
+	<string name="ingredients_of">Ingredients of %s</string>
+	<string name="no_ingredient">No ingredient available for %s</string>
 	<string name="no_internet">Sorry, there is no internet connection</string>
 	<string name="of">of</string>
 	<string name="see_ingredients">See Ingredients</string>
