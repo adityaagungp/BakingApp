@@ -50,6 +50,7 @@ public class RecipeUpdateService extends IntentService {
         if (recipe != null){
             recipeName = recipe.getName();
         }
+        realm.close();
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, BakingWidget.class));
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.list);

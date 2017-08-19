@@ -29,6 +29,7 @@
 
         <TextView
             android:id="@+id/emptyIngredient"
-            style="@style/SubheadingText"/>
+            style="@style/SubheadingText"
+            android:layout_centerInParent="true"/>
     </RelativeLayout>
 </RelativeLayout>

@@ -17,7 +17,6 @@ import com.aditya.bakingapp.adapter.RecipeAdapter;
 import com.aditya.bakingapp.object.Recipe;
 import com.aditya.bakingapp.recipe.RecipeActivity;
 import com.aditya.bakingapp.util.Constants;
-import com.aditya.bakingapp.util.NetworkUtils;
 import com.aditya.bakingapp.view.ItemClickListener;
 import com.aditya.bakingapp.widget.RecipeUpdateService;
 
@@ -38,7 +37,6 @@ public class MainActivity extends AppCompatActivity implements HomeView, ItemCli
 
     private HomePresenter mPresenter;
     private RecipeAdapter mAdapter;
-    private int mNumberColumn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,11 +55,11 @@ public class MainActivity extends AppCompatActivity implements HomeView, ItemCli
             fetchRecipes();
         }
 
-        mNumberColumn = list.getTag().equals("true") ? 2 : 1;
+        int nColumn = list.getTag().equals(getString(R.string.view_tablet)) ? 2 : 1;
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
-            mNumberColumn += 1;
+            nColumn += 1;
         }
-        GridLayoutManager layoutManager = new GridLayoutManager(this, mNumberColumn);
+        GridLayoutManager layoutManager = new GridLayoutManager(this, nColumn);
         list.setLayoutManager(layoutManager);
         list.setAdapter(mAdapter);
     }
@@ -103,12 +101,8 @@ public class MainActivity extends AppCompatActivity implements HomeView, ItemCli
     }
 
     private void fetchRecipes() {
-        if (NetworkUtils.isOnline(this)) {
-            onBeforeGetRecipes();
-            mPresenter.loadRecipes();
-        } else {
-            onErrorLoadingRecipes(getString(R.string.no_internet));
-        }
+        onBeforeGetRecipes();
+        mPresenter.loadRecipes();
     }
 
     private void showRecipes(List<Recipe> recipes) {

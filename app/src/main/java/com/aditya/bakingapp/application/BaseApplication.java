@@ -3,10 +3,7 @@ package com.aditya.bakingapp.application;
 import android.app.Application;
 
 import io.realm.Realm;
-
-/**
- * Created by ASUS A456U on 07/08/2017.
- */
+import io.realm.RealmConfiguration;
 
 public class BaseApplication extends Application {
 
@@ -14,5 +11,7 @@ public class BaseApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Realm.init(this);
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
+        Realm.setDefaultConfiguration(realmConfiguration);
     }
 }

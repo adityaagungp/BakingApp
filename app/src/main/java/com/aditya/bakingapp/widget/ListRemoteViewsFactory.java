@@ -2,6 +2,7 @@ package com.aditya.bakingapp.widget;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.v4.content.ContextCompat;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -15,12 +16,12 @@ import java.util.List;
 
 import io.realm.Realm;
 
-public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
+class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     private Context mContext;
     private List<Ingredient> mIngredients = new ArrayList<>();
 
-    public ListRemoteViewsFactory(Context context) {
+    ListRemoteViewsFactory(Context context) {
         mContext = context;
         updateIngredients();
     }
@@ -57,6 +58,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
                 .append(mContext.getString(R.string.of)).append(' ')
                 .append(ingredient.getIngredient());
         views.setTextViewText(R.id.ingredientDetail, new String(stringBuilder));
+        views.setTextColor(R.id.ingredientDetail, ContextCompat.getColor(mContext, R.color.icons));
         return views;
     }
 
@@ -83,16 +85,14 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
     private void updateIngredients() {
         SharedPreferences preferences = mContext.getApplicationContext().getSharedPreferences(Constants.PREFERENCES, 0);
         long recipeId = preferences.getLong(Constants.Param.RECIPE_ID, -1);
+        mIngredients = new ArrayList<>();
         if (recipeId != -1){
             Realm realm = Realm.getDefaultInstance();
             Recipe recipe = realm.where(Recipe.class).equalTo("id", recipeId).findFirst();
             if (recipe != null) {
-                mIngredients = recipe.getIngredients();
-            } else {
-                mIngredients = new ArrayList<>();
+                mIngredients = realm.copyFromRealm(recipe.getIngredients());
             }
-        } else {
-            mIngredients = new ArrayList<>();
+            realm.close();
         }
     }
 }

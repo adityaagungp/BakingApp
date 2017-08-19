@@ -19,7 +19,7 @@
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:tag="@string/tablet_view"/>
+        android:tag="@string/mode_view"/>
 
     <TextView
         android:id="@+id/emptyText"

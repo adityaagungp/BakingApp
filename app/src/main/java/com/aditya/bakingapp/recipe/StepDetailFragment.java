@@ -78,7 +78,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         Bundle data = getArguments();
         mTwoPane = false;
 
-
         if (data.containsKey(Constants.Param.STEP)) {
             mStep = data.getParcelable(Constants.Param.STEP);
             if (data.containsKey(Constants.Param.TWO_PANE)) {

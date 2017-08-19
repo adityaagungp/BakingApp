@@ -4,7 +4,6 @@ import com.aditya.bakingapp.api.APIRequest;
 import com.aditya.bakingapp.object.Recipe;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
@@ -14,16 +13,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * Created by ASUS A456U on 08/08/2017.
- */
-
-public class HomeInteractorImpl implements HomeInteractor, Callback<List<Recipe>> {
+class HomeInteractorImpl implements HomeInteractor, Callback<List<Recipe>> {
 
     private HomePresenter mPresenter;
     private Realm mRealm = Realm.getDefaultInstance();
 
-    public HomeInteractorImpl(HomePresenter presenter) {
+    HomeInteractorImpl(HomePresenter presenter) {
         mPresenter = presenter;
     }
 
@@ -71,8 +66,6 @@ public class HomeInteractorImpl implements HomeInteractor, Callback<List<Recipe>
 
     private List<Recipe> retrieveStoredRecipes() {
         RealmResults<Recipe> results = mRealm.where(Recipe.class).findAll();
-        List<Recipe> recipes = new ArrayList<>();
-        recipes.addAll(results);
-        return recipes;
+        return mRealm.copyFromRealm(results);
     }
 }
