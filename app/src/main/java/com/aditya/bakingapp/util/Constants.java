@@ -7,6 +7,7 @@ public class Constants {
     public static final class Param {
         public static final String RECIPE_ID = "activeRecipeId";
         public static final String INGREDIENTS = "ingredients";
+        public static final String PLAYER_POSITION = "playerPosition";
         public static final String RECIPE = "recipe";
         public static final String RECIPES = "recipes";
         public static final String RECIPE_NAME = "recipeName";

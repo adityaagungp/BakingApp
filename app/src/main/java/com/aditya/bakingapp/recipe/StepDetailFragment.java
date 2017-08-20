@@ -64,6 +64,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     private BandwidthMeter mBandwidthMeter;
     private MediaSessionCompat mMediaSession;
     private PlaybackStateCompat.Builder mStateBuilder;
+    private long lastPlayerPosition = 0;
 
     public StepDetailFragment() {
         // Required empty public constructor
@@ -91,6 +92,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         super.onSaveInstanceState(outState);
         outState.putParcelable(Constants.Param.STEP, mStep);
         outState.putBoolean(Constants.Param.TWO_PANE, mTwoPane);
+        outState.putLong(Constants.Param.PLAYER_POSITION, lastPlayerPosition);
     }
 
     @Override
@@ -99,7 +101,22 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         if (inState != null) {
             mStep = inState.getParcelable(Constants.Param.STEP);
             mTwoPane = inState.getBoolean(Constants.Param.TWO_PANE);
+            lastPlayerPosition = inState.getLong(Constants.Param.PLAYER_POSITION, 0);
         }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        loadPlayer();
+        resumePlayer();
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        savePlayerPosition();
+        releasePlayer();
     }
 
     @Override
@@ -162,8 +179,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
             playerView.setVisibility(View.GONE);
         } else {
             playerView.setVisibility(View.VISIBLE);
-            setupPlayerView();
-            initMediaSession();
+            playerView.setDefaultArtwork(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
         }
         if (TextUtils.isEmpty(mStep.getThumbnailURL())) {
             imageView.setVisibility(View.GONE);
@@ -175,8 +191,14 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         description.setText(mStep.getDescription());
     }
 
+    private void loadPlayer(){
+        if (!TextUtils.isEmpty(mStep.getVideoURL())){
+            setupPlayerView();
+            initMediaSession();
+        }
+    }
+
     private void setupPlayerView() {
-        playerView.setDefaultArtwork(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
         mBandwidthMeter = new DefaultBandwidthMeter();
         mDataSourceFactory = new DefaultDataSourceFactory(getContext(), Util.getUserAgent(getContext(), "BakingApp"),
                 (TransferListener<? super DataSource>) mBandwidthMeter);
@@ -203,6 +225,18 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         mMediaSession.setPlaybackState(mStateBuilder.build());
         mMediaSession.setCallback(new MySessionCallback());
         mMediaSession.setActive(true);
+    }
+
+    private void resumePlayer(){
+        if (!TextUtils.isEmpty(mStep.getVideoURL())){
+            mExoPlayer.seekTo(lastPlayerPosition);
+        }
+    }
+
+    private void savePlayerPosition(){
+        if (!TextUtils.isEmpty(mStep.getVideoURL())){
+            lastPlayerPosition = mExoPlayer.getCurrentPosition();
+        }
     }
 
     private void releasePlayer() {
