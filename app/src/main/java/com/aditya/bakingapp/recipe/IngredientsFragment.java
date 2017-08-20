@@ -25,13 +25,10 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class IngredientsFragment extends Fragment {
 
-    @BindView(R.id.list)
-    RecyclerView list;
+    @BindView(R.id.ingredientList)
+    RecyclerView ingredientList;
     @BindView(R.id.emptyText)
     TextView emptyText;
 
@@ -46,19 +43,17 @@ public class IngredientsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_ingredients, container, false);
         ButterKnife.bind(this, view);
         Bundle data = getArguments();
-        if (data.containsKey(Constants.Param.TWO_PANE)) {
-            mTwoPane = data.getBoolean(Constants.Param.TWO_PANE);
-        }
+        mTwoPane = data.containsKey(Constants.Param.TWO_PANE) && data.getBoolean(Constants.Param.TWO_PANE);
         emptyText.setText(getString(R.string.empty_ingredient));
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        list.setLayoutManager(layoutManager);
+        ingredientList.setLayoutManager(layoutManager);
         mAdapter = new IngredientAdapter(getContext());
-        list.setAdapter(mAdapter);
-        DividerItemDecoration divider = new DividerItemDecoration(list.getContext(), layoutManager.getOrientation());
-        list.addItemDecoration(divider);
+        ingredientList.setAdapter(mAdapter);
+        DividerItemDecoration divider = new DividerItemDecoration(ingredientList.getContext(), layoutManager.getOrientation());
+        ingredientList.addItemDecoration(divider);
         return view;
     }
 
@@ -99,16 +94,22 @@ public class IngredientsFragment extends Fragment {
         showIngredients(ingredients);
     }
 
+    public static IngredientsFragment newInstance(boolean twoPane){
+        IngredientsFragment fragment = new IngredientsFragment();
+        Bundle data = new Bundle();
+        data.putBoolean(Constants.Param.TWO_PANE, twoPane);
+        fragment.setArguments(data);
+        return fragment;
+    }
+
     public void showIngredients(List<Ingredient> ingredients) {
         if (!mTwoPane) {
             ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(String.format(getString(R.string.ingredients_of), mRecipeName));
         }
         if (ingredients == null || ingredients.isEmpty()) {
-            list.setVisibility(View.GONE);
             emptyText.setVisibility(View.VISIBLE);
         } else {
             mAdapter.setIngredients(ingredients);
-            list.setVisibility(View.VISIBLE);
             emptyText.setVisibility(View.GONE);
         }
     }

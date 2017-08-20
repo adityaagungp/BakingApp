@@ -9,17 +9,13 @@ import com.aditya.bakingapp.util.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by ASUS A456U on 07/08/2017.
- */
-
-public class HomePresenterImpl implements HomePresenter {
+class HomePresenterImpl implements HomePresenter {
 
     private List<Recipe> mRecipes;
     private HomeView mView;
     private HomeInteractor mInteractor;
 
-    public HomePresenterImpl(HomeView view){
+    HomePresenterImpl(HomeView view){
         mView = view;
         mRecipes = new ArrayList<>();
         mInteractor = new HomeInteractorImpl(this);

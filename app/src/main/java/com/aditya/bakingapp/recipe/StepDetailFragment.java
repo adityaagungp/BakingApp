@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,9 +45,6 @@ import com.google.android.exoplayer2.util.Util;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class StepDetailFragment extends Fragment implements ExoPlayer.EventListener {
 
     @BindView(R.id.playerView)
@@ -102,7 +100,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
             mStep = inState.getParcelable(Constants.Param.STEP);
             mTwoPane = inState.getBoolean(Constants.Param.TWO_PANE);
         }
-        loadStep();
     }
 
     @Override
@@ -111,18 +108,64 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         releasePlayer();
     }
 
+    @Override
+    public void onTimelineChanged(Timeline timeline, Object manifest) {
+
+    }
+
+    @Override
+    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+
+    }
+
+    @Override
+    public void onLoadingChanged(boolean isLoading) {
+
+    }
+
+    @Override
+    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+        if (mStateBuilder != null && mExoPlayer != null && mMediaSession != null){
+            if (playbackState == ExoPlayer.STATE_READY && playWhenReady){
+                mStateBuilder.setState(PlaybackStateCompat.STATE_PLAYING, mExoPlayer.getCurrentPosition(), 1f);
+            } else if (playbackState == ExoPlayer.STATE_READY){
+                mStateBuilder.setState(PlaybackStateCompat.STATE_PAUSED, mExoPlayer.getCurrentPosition(), 1f);
+            }
+            mMediaSession.setPlaybackState(mStateBuilder.build());
+        }
+    }
+
+    @Override
+    public void onPlayerError(ExoPlaybackException error) {
+
+    }
+
+    @Override
+    public void onPositionDiscontinuity() {
+
+    }
+
+    public static StepDetailFragment newInstance(Step step, boolean twoPane){
+        StepDetailFragment fragment = new StepDetailFragment();
+        Bundle data = new Bundle();
+        data.putParcelable(Constants.Param.STEP, step);
+        data.putBoolean(Constants.Param.TWO_PANE, twoPane);
+        fragment.setArguments(data);
+        return fragment;
+    }
+
     private void loadStep() {
         if (!mTwoPane) {
             ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(mStep.getShortDescription());
         }
-        if (mStep.getVideoURL() == null || mStep.getVideoURL().length() == 0) {
+        if (TextUtils.isEmpty(mStep.getVideoURL())) {
             playerView.setVisibility(View.GONE);
         } else {
             playerView.setVisibility(View.VISIBLE);
             setupPlayerView();
             initMediaSession();
         }
-        if (mStep.getThumbnailURL() == null || mStep.getThumbnailURL().length() == 0) {
+        if (TextUtils.isEmpty(mStep.getThumbnailURL())) {
             imageView.setVisibility(View.GONE);
         } else {
             imageView.setVisibility(View.VISIBLE);
@@ -171,43 +214,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         if (mMediaSession != null) {
             mMediaSession.setActive(false);
         }
-    }
-
-    @Override
-    public void onTimelineChanged(Timeline timeline, Object manifest) {
-
-    }
-
-    @Override
-    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-
-    }
-
-    @Override
-    public void onLoadingChanged(boolean isLoading) {
-
-    }
-
-    @Override
-    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-        if (mStateBuilder != null && mExoPlayer != null && mMediaSession != null){
-            if (playbackState == ExoPlayer.STATE_READY && playWhenReady){
-                mStateBuilder.setState(PlaybackStateCompat.STATE_PLAYING, mExoPlayer.getCurrentPosition(), 1f);
-            } else if (playbackState == ExoPlayer.STATE_READY){
-                mStateBuilder.setState(PlaybackStateCompat.STATE_PAUSED, mExoPlayer.getCurrentPosition(), 1f);
-            }
-            mMediaSession.setPlaybackState(mStateBuilder.build());
-        }
-    }
-
-    @Override
-    public void onPlayerError(ExoPlaybackException error) {
-
-    }
-
-    @Override
-    public void onPositionDiscontinuity() {
-
     }
 
     private class MySessionCallback extends MediaSessionCompat.Callback {

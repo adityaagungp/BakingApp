@@ -26,8 +26,8 @@ import butterknife.ButterKnife;
 
 public class RecipeDetailFragment extends Fragment implements ItemClickListener, View.OnClickListener {
 
-    @BindView(R.id.list)
-    RecyclerView list;
+    @BindView(R.id.stepList)
+    RecyclerView stepList;
     @BindView(R.id.emptyText)
     TextView emptyText;
 
@@ -42,19 +42,15 @@ public class RecipeDetailFragment extends Fragment implements ItemClickListener,
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_steps, container, false);
         Bundle data = getArguments();
-        if (data.containsKey(Constants.Param.TWO_PANE)) {
-            mTwoPane = data.getBoolean(Constants.Param.TWO_PANE);
-        } else {
-            mTwoPane = false;
-        }
+        mTwoPane = data.containsKey(Constants.Param.TWO_PANE) && data.getBoolean(Constants.Param.TWO_PANE);
         ButterKnife.bind(this, view);
         emptyText.setText(getString(R.string.empty_step));
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        list.setLayoutManager(layoutManager);
+        stepList.setLayoutManager(layoutManager);
         mAdapter = new StepAdapter(getContext(), this);
-        list.setAdapter(mAdapter);
+        stepList.setAdapter(mAdapter);
         return view;
     }
 
@@ -87,12 +83,8 @@ public class RecipeDetailFragment extends Fragment implements ItemClickListener,
     public void onItemClick(int index) {
         Step step = mRecipe.getSteps().get(index);
         if (step != null) {
+            StepDetailFragment fragment = StepDetailFragment.newInstance(step, mTwoPane);
             FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-            StepDetailFragment fragment = new StepDetailFragment();
-            Bundle data = new Bundle();
-            data.putParcelable(Constants.Param.STEP, step);
-            data.putBoolean(Constants.Param.TWO_PANE, mTwoPane);
-            fragment.setArguments(data);
             if (mTwoPane) {
                 transaction.replace(R.id.childContent, fragment);
             } else {
@@ -103,31 +95,10 @@ public class RecipeDetailFragment extends Fragment implements ItemClickListener,
         }
     }
 
-    public void showRecipe(Recipe recipe) {
-        if (!mTwoPane) {
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(mRecipe.getName());
-        }
-        if (recipe.getIngredients() != null && !recipe.getIngredients().isEmpty()) {
-            View view = LayoutInflater.from(getContext()).inflate(R.layout.header_steps, null, false);
-            Button btnSeeIngredients = (Button) view.findViewById(R.id.btnSeeIngredients);
-            btnSeeIngredients.setOnClickListener(this);
-            mAdapter.setHeader(view);
-        }
-        mAdapter.setSteps(recipe.getSteps());
-        if (recipe.getSteps().isEmpty()) {
-            emptyText.setVisibility(View.VISIBLE);
-        } else {
-            emptyText.setVisibility(View.GONE);
-        }
-    }
-
     @Override
     public void onClick(View v) {
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-        IngredientsFragment fragment = new IngredientsFragment();
-        Bundle data = new Bundle();
-        data.putBoolean(Constants.Param.TWO_PANE, mTwoPane);
-        fragment.setArguments(data);
+        IngredientsFragment fragment = IngredientsFragment.newInstance(mTwoPane);
         if (mTwoPane) {
             transaction.add(R.id.childContent, fragment);
         } else {
@@ -135,5 +106,29 @@ public class RecipeDetailFragment extends Fragment implements ItemClickListener,
             transaction.addToBackStack(null);
         }
         transaction.commit();
+    }
+
+    public static RecipeDetailFragment newInstance(boolean twoPane){
+        RecipeDetailFragment fragment = new RecipeDetailFragment();
+        Bundle data = new Bundle();
+        data.putBoolean(Constants.Param.TWO_PANE, twoPane);
+        fragment.setArguments(data);
+        return fragment;
+    }
+
+    private void showRecipe(Recipe recipe) {
+        if (!mTwoPane) {
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(mRecipe.getName());
+        }
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.header_steps, null, false);
+        Button btnSeeIngredients = (Button) view.findViewById(R.id.btnSeeIngredients);
+        btnSeeIngredients.setOnClickListener(this);
+        mAdapter.setHeader(view);
+        mAdapter.setSteps(recipe.getSteps());
+        if (recipe.getSteps().isEmpty()) {
+            emptyText.setVisibility(View.VISIBLE);
+        } else {
+            emptyText.setVisibility(View.GONE);
+        }
     }
 }

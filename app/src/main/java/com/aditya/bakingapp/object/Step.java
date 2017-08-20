@@ -8,10 +8,6 @@ import com.google.gson.annotations.SerializedName;
 
 import io.realm.RealmObject;
 
-/**
- * Created by ASUS A456U on 07/08/2017.
- */
-
 public class Step extends RealmObject implements Parcelable {
 
     @SerializedName("id")

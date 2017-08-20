@@ -32,8 +32,8 @@ public class MainActivity extends AppCompatActivity implements HomeView, ItemCli
     ProgressBar progressBar;
     @BindView(R.id.emptyText)
     TextView emptyText;
-    @BindView(R.id.list)
-    RecyclerView list;
+    @BindView(R.id.recipeList)
+    RecyclerView recipeList;
 
     private HomePresenter mPresenter;
     private RecipeAdapter mAdapter;
@@ -55,13 +55,13 @@ public class MainActivity extends AppCompatActivity implements HomeView, ItemCli
             fetchRecipes();
         }
 
-        int nColumn = list.getTag().equals(getString(R.string.view_tablet)) ? 2 : 1;
+        int nColumn = recipeList.getTag().equals(getString(R.string.view_tablet)) ? 2 : 1;
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
             nColumn += 1;
         }
         GridLayoutManager layoutManager = new GridLayoutManager(this, nColumn);
-        list.setLayoutManager(layoutManager);
-        list.setAdapter(mAdapter);
+        recipeList.setLayoutManager(layoutManager);
+        recipeList.setAdapter(mAdapter);
     }
 
     @Override
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements HomeView, ItemCli
     }
 
     public void onBeforeGetRecipes() {
-        list.setVisibility(View.INVISIBLE);
+        recipeList.setVisibility(View.INVISIBLE);
         progressBar.setVisibility(View.VISIBLE);
         emptyText.setVisibility(View.INVISIBLE);
     }
@@ -108,10 +108,10 @@ public class MainActivity extends AppCompatActivity implements HomeView, ItemCli
     private void showRecipes(List<Recipe> recipes) {
         if (recipes == null || recipes.isEmpty()) {
             emptyText.setVisibility(View.VISIBLE);
-            list.setVisibility(View.INVISIBLE);
+            recipeList.setVisibility(View.INVISIBLE);
         } else {
             emptyText.setVisibility(View.INVISIBLE);
-            list.setVisibility(View.VISIBLE);
+            recipeList.setVisibility(View.VISIBLE);
         }
     }
 

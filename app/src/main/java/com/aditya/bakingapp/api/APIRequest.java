@@ -13,10 +13,6 @@ import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-/**
- * Created by ASUS A456U on 07/08/2017.
- */
-
 public class APIRequest {
 
     private static APIRequest instance = new APIRequest();

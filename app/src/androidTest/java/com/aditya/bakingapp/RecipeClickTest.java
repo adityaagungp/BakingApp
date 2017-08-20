@@ -25,7 +25,7 @@ public class RecipeClickTest {
 
     @Test
     public void clickRecipeItem() {
-        onView(withId(R.id.list)).perform(actionOnItemAtPosition(0, click()));
+        onView(withId(R.id.recipeList)).perform(actionOnItemAtPosition(0, click()));
         intended(hasComponent(RecipeActivity.class.getName()));
     }
 }

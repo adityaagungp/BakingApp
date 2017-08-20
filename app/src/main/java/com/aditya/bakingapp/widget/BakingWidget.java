@@ -15,9 +15,6 @@ import com.aditya.bakingapp.home.MainActivity;
 import com.aditya.bakingapp.recipe.RecipeActivity;
 import com.aditya.bakingapp.util.Constants;
 
-/**
- * Implementation of App Widget functionality.
- */
 public class BakingWidget extends AppWidgetProvider {
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
